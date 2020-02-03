@@ -1,7 +1,14 @@
-'''ResNeXt50 model for tensorflow-keras.
-Code is adapted from https://github.com/keras-team/keras-applications/blob/master/keras_applications/resnet50.py
-'''
+"""ResNeXt50 model for tensorflow-keras.
 
+Reference paper:
+
+[Aggregated Residual Transformations for Deep Neural Networks]
+(https://arxiv.org/abs/1611.05431)
+
+Model adapted from:
+- [Tensorflow]
+(https://github.com/keras-team/keras-applications/blob/master/keras_applications/resnet50.py)
+"""
 import os
 import warnings
 import tensorflow as tf
@@ -31,13 +38,13 @@ def identity_block(input_tensor, kernel_size, filters, stage, block):
     
     grouped_convolution = []
     for i in range(CARDINALITY):
-        x = layers.Conv2D((filters1//CARDINALITY)*2, (1, 1),
+        x = layers.Conv2D(int(round(filters1/CARDINALITY))*2, (1, 1),
                           kernel_initializer='he_normal',
                           name=conv_name_base + '2a' + f'_{i}')(input_tensor)
         x = layers.BatchNormalization(axis=bn_axis, name=bn_name_base + '2a' + f'_{i}')(x)
         x = activations.relu(x)
 
-        x = layers.Conv2D((filters2//CARDINALITY)*2, kernel_size,
+        x = layers.Conv2D(int(round(filters1/CARDINALITY))*2, kernel_size,
                           padding='same',
                           kernel_initializer='he_normal',
                           name=conv_name_base + '2b' + f'_{i}')(x)
@@ -87,13 +94,13 @@ def conv_block(input_tensor,
     
     grouped_convolution = []
     for i in range(CARDINALITY):
-        x = layers.Conv2D((filters1//CARDINALITY)*2, (1, 1), strides=strides,
+        x = layers.Conv2D(int(round(filters1/CARDINALITY))*2, (1, 1), strides=strides,
                           kernel_initializer='he_normal',
                           name=conv_name_base + '2a' + f'_{i}')(input_tensor)
         x = layers.BatchNormalization(axis=bn_axis, name=bn_name_base + '2a' + f'_{i}')(x)
         x = activations.relu(x)
 
-        x = layers.Conv2D((filters2//CARDINALITY)*2, kernel_size, padding='same',
+        x = layers.Conv2D(int(round(filters1/CARDINALITY))*2, kernel_size, padding='same',
                           kernel_initializer='he_normal',
                           name=conv_name_base + '2b' + f'_{i}')(x)
         x = layers.BatchNormalization(axis=bn_axis, name=bn_name_base + '2b' + f'_{i}')(x)
