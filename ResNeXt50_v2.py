@@ -95,8 +95,14 @@ def conv_block(input_tensor,
     
     grouped_convolution = []
     for i in range(CARDINALITY):
-        x = layers.BatchNormalization(axis=bn_axis, name=bn_name_base + '2a' + f'_{i}')(input_tensor)
-        x = activations.relu(x)
+        if strides == (1, 1):
+            x = input_tensor
+            # First activation of the network is done before splitting the paths.
+            # Checking for strides saves us from introducing a new variable.
+            # (https://gsy00517.github.io/deep-learning20200113174731/1603.05027.pdf)
+        else:
+            x = layers.BatchNormalization(axis=bn_axis, name=bn_name_base + '2a' + f'_{i}')(input_tensor)
+            x = activations.relu(x)
         x = layers.Conv2D(int(round(filters1/CARDINALITY))*2, (1, 1), strides=strides,
                           kernel_initializer='he_normal',
                           name=conv_name_base + '2a' + f'_{i}')(x)
