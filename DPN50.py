@@ -266,7 +266,7 @@ def DPN50(include_top=True,
                           'has been changed since Keras 2.2.0.')
 
     # Create model.
-    model = Model(img_input, x, name='resnext50')
+    model = Model(img_input, x, name='dpn50')
 
     # Load weights.
     if weights == 'imagenet':
